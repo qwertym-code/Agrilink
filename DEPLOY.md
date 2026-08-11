@@ -38,8 +38,9 @@ Both hosts deploy from the repository.
 git push -u origin main
 ```
 
-`demo.txt` contains a home IP address. It is deliberately left uncommitted —
-do not `git add` it.
+Check `git status` before pushing. Anything holding an IP address, a
+credential, or a personal note belongs outside the repository — this one is
+public.
 
 ---
 
@@ -67,18 +68,21 @@ don't need to.
 
 ## How the client reaches the API
 
-The root [`vercel.json`](vercel.json) proxies `/api/*` to the Render service, so
-the browser only ever talks to the Vercel origin. That means:
+[`client/vercel.json`](client/vercel.json) proxies `/api/*` to the Render
+service, so the browser only ever talks to the Vercel origin. That means:
 
 - **No `VITE_API_URL` is needed.** The client's default relative `/api` works.
 - **CORS is not involved** for browser traffic — every request is same-origin.
   The API's `CLIENT_URL` allow-list still matters for anything calling it
   directly, such as the mobile app.
 
-The trade-off is that the Render URL is written into `vercel.json`. **If the API
-is ever redeployed under a different hostname, edit it there** — the site will
-otherwise return the Vercel SPA shell for every API call, which shows up as
-"Unexpected token '<'" JSON errors in the browser console.
+The trade-off is that the Render URL is written into `client/vercel.json`.
+**If the API is ever redeployed under a different hostname, edit it there** —
+the site will otherwise return the Vercel SPA shell for every API call, which
+shows up as "Unexpected token '<'" JSON errors in the browser console.
+
+Vercel reads the `vercel.json` inside its configured **Root Directory**, which
+for this project is `client`. A copy at the repo root is ignored entirely.
 
 The alternative is setting `VITE_API_URL` in the Vercel dashboard and dropping
 the `/api` rewrite. Both work; the proxy keeps the configuration in the repo
@@ -144,7 +148,7 @@ password is published in this file.
 
 - [ ] Atlas password rotated
 - [ ] Atlas network access allows the API host
-- [ ] Pushed to GitHub, `demo.txt` still uncommitted
+- [ ] Pushed to GitHub, with nothing personal or secret in the diff
 - [ ] Render deployed, `/api/health` returns ok
 - [ ] Vercel deployed with Root Directory `client` and `VITE_API_URL` set
 - [ ] `CLIENT_URL` on Render points at the Vercel URL

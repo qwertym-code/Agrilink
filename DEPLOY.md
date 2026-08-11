@@ -65,6 +65,25 @@ don't need to.
 
 ---
 
+## How the client reaches the API
+
+The root [`vercel.json`](vercel.json) proxies `/api/*` to the Render service, so
+the browser only ever talks to the Vercel origin. That means:
+
+- **No `VITE_API_URL` is needed.** The client's default relative `/api` works.
+- **CORS is not involved** for browser traffic — every request is same-origin.
+  The API's `CLIENT_URL` allow-list still matters for anything calling it
+  directly, such as the mobile app.
+
+The trade-off is that the Render URL is written into `vercel.json`. **If the API
+is ever redeployed under a different hostname, edit it there** — the site will
+otherwise return the Vercel SPA shell for every API call, which shows up as
+"Unexpected token '<'" JSON errors in the browser console.
+
+The alternative is setting `VITE_API_URL` in the Vercel dashboard and dropping
+the `/api` rewrite. Both work; the proxy keeps the configuration in the repo
+where it is reviewable.
+
 ## Step 3 — Client on Vercel
 
 1. [vercel.com](https://vercel.com) → sign up → **Add New → Project** → import

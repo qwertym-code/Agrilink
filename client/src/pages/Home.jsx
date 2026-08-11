@@ -4,12 +4,12 @@ import api, { getErrorMessage } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useShopConfig } from '../context/ShopConfigContext';
 import ProductCard from '../components/ProductCard';
-import { SearchIcon, PinIcon, categoryIcon } from '../components/Icons';
-import { titleCase } from '../utils/format';
+import { SearchIcon, PinIcon, LeafIcon, categoryIcon } from '../components/Icons';
+import { titleCase, formatPrice } from '../utils/format';
 
 export default function Home() {
   const { user } = useAuth();
-  const { categories } = useShopConfig();
+  const { categories, freeDeliveryAbove } = useShopConfig();
   const navigate = useNavigate();
 
   const [query, setQuery] = useState('');
@@ -52,11 +52,26 @@ export default function Home() {
       </div>
 
       <div className="ag-hero mb-4">
-        <span className="badge rounded-pill bg-light text-dark align-self-start mb-2">Farm Fresh</span>
-        <h2 className="fw-bold mb-2" style={{ fontSize: '1.35rem' }}>Seasonal Picks</h2>
+        <span className="ag-eyebrow mb-2" style={{ color: 'rgba(255,255,255,0.75)' }}>Farm Fresh</span>
+        <h2 className="mb-1">Seasonal Picks</h2>
+        <p className="mb-3" style={{ color: 'rgba(255,255,255,0.82)', fontSize: '0.9rem', maxWidth: '34ch' }}>
+          Harvested this week by growers near you.
+        </p>
         <Link to="/shop" className="btn btn-light btn-sm rounded-pill fw-semibold align-self-start px-3">
           Shop Now
         </Link>
+      </div>
+
+      {/* Reads the threshold from the server so this promise can't drift out
+          of step with what checkout actually charges. */}
+      <div className="ag-panel d-flex align-items-center gap-3 mb-4 py-2">
+        <span className="ag-cat-icon" style={{ width: 40, height: 40, borderRadius: 12 }}>
+          <LeafIcon size={18} />
+        </span>
+        <div style={{ fontSize: '0.84rem', lineHeight: 1.35 }}>
+          <strong>Free delivery</strong> on orders over {formatPrice(freeDeliveryAbove)}
+          <div className="ag-muted">Paid to the farmer on delivery.</div>
+        </div>
       </div>
 
       <h2 className="ag-section-title">Categories</h2>

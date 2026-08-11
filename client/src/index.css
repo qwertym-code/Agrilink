@@ -1,0 +1,36 @@
+:root {
+  --agrilink-green: #2f7d32;
+  --agrilink-green-dark: #24632a;
+}
+
+body {
+  background-color: #f6f8f5;
+  min-height: 100vh;
+}
+
+.text-agrilink {
+  color: var(--agrilink-green);
+}
+
+.btn-agrilink {
+  background-color: var(--agrilink-green);
+  border-color: var(--agrilink-green);
+  color: #fff;
+}
+
+.btn-agrilink:hover,
+.btn-agrilink:focus {
+  background-color: var(--agrilink-green-dark);
+  border-color: var(--agrilink-green-dark);
+  color: #fff;
+}
+
+.navbar-agrilink {
+  background-color: var(--agrilink-green);
+}
+
+/* Cap the auth cards so the forms stay readable on wide screens. */
+.auth-card {
+  max-width: 520px;
+  width: 100%;
+}

@@ -71,8 +71,16 @@ export default function ProductDetails() {
 
       <div className="ag-shell px-3 pt-3">
         <div className="ag-card mb-3">
-          <ProductImage src={product.imageUrl} alt={product.name} iconSize={42} style={{ aspectRatio: '4 / 3' }}>
-            {product.tags?.[0] && <span className="ag-badge">{titleCase(product.tags[0])}</span>}
+          <ProductImage
+            src={product.imageUrl}
+            alt={product.name}
+            category={product.category}
+            iconSize={92}
+            style={{ aspectRatio: '4 / 3' }}
+          >
+            {product.tags?.[0] && (
+              <span className={`ag-badge tag-${product.tags[0]}`}>{titleCase(product.tags[0])}</span>
+            )}
           </ProductImage>
         </div>
 

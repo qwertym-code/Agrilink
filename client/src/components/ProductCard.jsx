@@ -22,8 +22,15 @@ export default function ProductCard({ product }) {
 
   return (
     <Link to={`/product/${product._id}`} className="ag-card text-decoration-none text-reset d-flex flex-column">
-      <ProductImage src={product.imageUrl} alt={product.name} iconSize={30}>
-        {product.tags?.[0] && <span className="ag-badge">{titleCase(product.tags[0])}</span>}
+      <ProductImage
+        src={product.imageUrl}
+        alt={product.name}
+        category={product.category}
+        iconSize={46}
+      >
+        {product.tags?.[0] && (
+          <span className={`ag-badge tag-${product.tags[0]}`}>{titleCase(product.tags[0])}</span>
+        )}
 
         {soldOut && (
           <span className="ag-badge" style={{ left: 'auto', right: 8, background: '#d92d20', color: '#fff' }}>

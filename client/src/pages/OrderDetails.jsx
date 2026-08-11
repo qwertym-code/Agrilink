@@ -5,6 +5,7 @@ import TopBar from '../components/TopBar';
 import { formatPrice, titleCase } from '../utils/format';
 import { CheckIcon, PinIcon } from '../components/Icons';
 import ProductImage from '../components/ProductImage';
+import { ProduceBurst } from '../components/Decor';
 
 export default function OrderDetails() {
   const { id } = useParams();
@@ -49,9 +50,10 @@ export default function OrderDetails() {
       <TopBar title="Order placed" back />
 
       <div className="ag-shell px-3 pt-3">
-        <div className="ag-panel text-center mb-3">
+        <div className="ag-panel text-center mb-3 position-relative overflow-hidden">
+          <ProduceBurst />
           <div
-            className="ag-success-tick rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+            className="ag-success-tick rounded-circle d-inline-flex align-items-center justify-content-center mb-2 position-relative"
             style={{ width: 52, height: 52, background: 'var(--ag-green)', color: '#fff' }}
           >
             <CheckIcon size={28} />

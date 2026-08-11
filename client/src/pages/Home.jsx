@@ -5,7 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { useShopConfig } from '../context/ShopConfigContext';
 import ProductCard from '../components/ProductCard';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { SearchIcon, PinIcon, LeafIcon, categoryIcon } from '../components/Icons';
+import { SearchIcon, PinIcon, LeafIcon } from '../components/Icons';
+import { ProduceScatter, ProduceMarquee } from '../components/Decor';
+import { produceForCategory, categoryColor } from '../components/Produce';
 import { titleCase, formatPrice } from '../utils/format';
 
 export default function Home() {
@@ -56,7 +58,8 @@ export default function Home() {
         {user ? `Delivering to ${user.name}` : 'Sign in to set a delivery address'}
       </div>
 
-      <div className="ag-hero mb-4">
+      <div className="ag-hero mb-3">
+        <ProduceScatter />
         <span className="ag-eyebrow mb-2" style={{ color: 'rgba(255,255,255,0.75)' }}>Farm Fresh</span>
         <h2 className="mb-1">Seasonal Picks</h2>
         <p className="mb-3" style={{ color: 'rgba(255,255,255,0.82)', fontSize: '0.9rem', maxWidth: '34ch' }}>
@@ -66,6 +69,8 @@ export default function Home() {
           Shop Now
         </Link>
       </div>
+
+      <ProduceMarquee />
 
       {/* Reads the threshold from the server so this promise can't drift out
           of step with what checkout actually charges. */}
@@ -82,10 +87,16 @@ export default function Home() {
       <h2 className="ag-section-title">Categories</h2>
       <div className="d-flex gap-4 mb-4 overflow-auto pb-1">
         {categories.filter((c) => c !== 'other').map((cat) => {
-          const Icon = categoryIcon[cat];
+          const Illustration = produceForCategory[cat];
           return (
             <button key={cat} className="ag-cat" onClick={() => navigate(`/shop?category=${cat}`)}>
-              <span className="ag-cat-icon">{Icon ? <Icon size={24} /> : null}</span>
+              <span
+                className="ag-cat-icon"
+                data-tint=""
+                style={{ '--tint': categoryColor[cat] }}
+              >
+                {Illustration ? <Illustration size={34} /> : null}
+              </span>
               <span>{titleCase(cat)}</span>
             </button>
           );

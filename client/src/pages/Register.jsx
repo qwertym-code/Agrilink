@@ -2,15 +2,11 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, dashboardPath } from '../context/AuthContext';
 import { getErrorMessage, getFieldErrors } from '../api/axios';
+import { LeafIcon } from '../components/Icons';
 
 const EMPTY = {
-  name: '',
-  email: '',
-  phone: '',
-  password: '',
-  role: 'consumer',
-  farmName: '',
-  location: '',
+  name: '', email: '', phone: '', password: '',
+  role: 'consumer', farmName: '', location: '',
 };
 
 export default function Register() {
@@ -23,7 +19,6 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
 
   const isRetailer = form.role === 'retailer';
-
   const update = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = async (e) => {
@@ -32,8 +27,7 @@ export default function Register() {
     setFieldErrors({});
     setSubmitting(true);
 
-    // Consumers never send shop details — the server ignores them anyway,
-    // but there's no reason to put them on the wire.
+    // Consumers never send shop details.
     const payload = {
       name: form.name.trim(),
       email: form.email.trim(),
@@ -54,157 +48,101 @@ export default function Register() {
     }
   };
 
-  // Bootstrap shows .invalid-feedback only next to an .is-invalid control.
   const invalid = (field) => (fieldErrors[field] ? 'is-invalid' : '');
 
   return (
-    <div className="d-flex justify-content-center">
-      <div className="card shadow-sm auth-card">
-        <div className="card-body p-4">
-          <h2 className="h4 mb-1 text-agrilink">Join Agrilink</h2>
-          <p className="text-muted small mb-4">
-            Buy fresh produce, or sell what you grow.
-          </p>
+    <div className="ag-shell px-3 py-4 d-flex justify-content-center">
+      <div className="auth-card">
+        <div className="text-center mb-4">
+          <div
+            className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+            style={{ width: 58, height: 58, background: 'var(--ag-green)', color: '#fff' }}
+          >
+            <LeafIcon size={28} />
+          </div>
+          <h1 className="fw-bold text-agrilink mb-1" style={{ fontSize: '1.5rem' }}>Join Agrilink</h1>
+          <p className="ag-muted mb-0" style={{ fontSize: '0.88rem' }}>Buy fresh produce, or sell what you grow.</p>
+        </div>
 
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+        <div className="ag-panel">
+          {error && <div className="alert alert-danger py-2" style={{ fontSize: '0.86rem' }}>{error}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
             {/* Role decides which fields matter, so it comes first. */}
-            <div className="mb-3">
-              <label className="form-label d-block">I am a</label>
-              <div className="btn-group w-100" role="group" aria-label="Account type">
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="role"
-                  id="role-consumer"
-                  autoComplete="off"
-                  checked={!isRetailer}
-                  onChange={() => setForm((prev) => ({ ...prev, role: 'consumer' }))}
-                />
-                <label className="btn btn-outline-success" htmlFor="role-consumer">
-                  Consumer
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="role"
-                  id="role-retailer"
-                  autoComplete="off"
-                  checked={isRetailer}
-                  onChange={() => setForm((prev) => ({ ...prev, role: 'retailer' }))}
-                />
-                <label className="btn btn-outline-success" htmlFor="role-retailer">
-                  Retailer / Farmer
-                </label>
-              </div>
+            <label className="form-label small fw-semibold mb-1">I am a</label>
+            <div className="ag-segment mb-3">
+              <button
+                type="button"
+                className={!isRetailer ? 'active' : ''}
+                onClick={() => setForm((prev) => ({ ...prev, role: 'consumer' }))}
+              >
+                Consumer
+              </button>
+              <button
+                type="button"
+                className={isRetailer ? 'active' : ''}
+                onClick={() => setForm((prev) => ({ ...prev, role: 'retailer' }))}
+              >
+                Retailer / Farmer
+              </button>
             </div>
 
-            <div className="mb-3">
-              <label htmlFor="name" className="form-label">Full name</label>
+            <Field id="name" label="Full name" value={form.name} onChange={update('name')} error={fieldErrors.name} invalid={invalid('name')} autoComplete="name" />
+            <Field id="email" label="Email" type="email" value={form.email} onChange={update('email')} error={fieldErrors.email} invalid={invalid('email')} autoComplete="email" />
+
+            <label htmlFor="phone" className="form-label small fw-semibold mb-1">Phone number</label>
+            <div className="input-group mb-1">
+              <span className="input-group-text" style={{ borderRadius: '10px 0 0 10px' }}>+91</span>
               <input
-                id="name"
-                className={`form-control ${invalid('name')}`}
-                type="text"
-                autoComplete="name"
-                value={form.name}
-                onChange={update('name')}
+                id="phone"
+                className={`ag-input ${invalid('phone')}`}
+                style={{ borderRadius: '0 10px 10px 0' }}
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="9876543210"
+                value={form.phone}
+                onChange={update('phone')}
                 required
               />
-              <div className="invalid-feedback">{fieldErrors.name}</div>
             </div>
+            {fieldErrors.phone
+              ? <div className="text-danger mb-3" style={{ fontSize: '0.78rem' }}>{fieldErrors.phone}</div>
+              : <div className="ag-muted mb-3" style={{ fontSize: '0.76rem' }}>You can log in with this number or your email.</div>}
 
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">Email</label>
-              <input
-                id="email"
-                className={`form-control ${invalid('email')}`}
-                type="email"
-                autoComplete="email"
-                value={form.email}
-                onChange={update('email')}
-                required
-              />
-              <div className="invalid-feedback">{fieldErrors.email}</div>
-            </div>
-
-            <div className="mb-3">
-              <label htmlFor="phone" className="form-label">Phone number</label>
-              <div className="input-group">
-                <span className="input-group-text">+91</span>
-                <input
-                  id="phone"
-                  className={`form-control ${invalid('phone')}`}
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="tel"
-                  placeholder="9876543210"
-                  value={form.phone}
-                  onChange={update('phone')}
-                  required
-                />
-                <div className="invalid-feedback">{fieldErrors.phone}</div>
-              </div>
-              <div className="form-text">You can log in with this number or your email.</div>
-            </div>
-
-            <div className={isRetailer ? 'mb-3' : 'mb-4'}>
-              <label htmlFor="password" className="form-label">Password</label>
-              <input
-                id="password"
-                className={`form-control ${invalid('password')}`}
-                type="password"
-                autoComplete="new-password"
-                value={form.password}
-                onChange={update('password')}
-                required
-              />
-              <div className="invalid-feedback">{fieldErrors.password}</div>
-              <div className="form-text">At least 6 characters.</div>
-            </div>
+            <Field id="password" label="Password" type="password" value={form.password} onChange={update('password')} error={fieldErrors.password} invalid={invalid('password')} autoComplete="new-password" hint="At least 6 characters." />
 
             {isRetailer && (
               <>
-                <div className="mb-3">
-                  <label htmlFor="farmName" className="form-label">Farm / shop name</label>
-                  <input
-                    id="farmName"
-                    className={`form-control ${invalid('farmName')}`}
-                    type="text"
-                    value={form.farmName}
-                    onChange={update('farmName')}
-                    required
-                  />
-                  <div className="invalid-feedback">{fieldErrors.farmName}</div>
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="location" className="form-label">Location</label>
-                  <input
-                    id="location"
-                    className={`form-control ${invalid('location')}`}
-                    type="text"
-                    placeholder="Village / town, district"
-                    value={form.location}
-                    onChange={update('location')}
-                    required
-                  />
-                  <div className="invalid-feedback">{fieldErrors.location}</div>
-                </div>
+                <Field id="farmName" label="Farm / shop name" value={form.farmName} onChange={update('farmName')} error={fieldErrors.farmName} invalid={invalid('farmName')} />
+                <Field id="location" label="Location" placeholder="Village / town, district" value={form.location} onChange={update('location')} error={fieldErrors.location} invalid={invalid('location')} />
               </>
             )}
 
-            <button className="btn btn-agrilink w-100" type="submit" disabled={submitting}>
+            <button className="btn btn-agrilink w-100 py-2 mt-2" type="submit" disabled={submitting}>
               {submitting ? 'Creating account…' : 'Create account'}
             </button>
           </form>
 
-          <p className="text-center text-muted small mt-4 mb-0">
-            Already have an account? <Link to="/login">Log in</Link>
+          <p className="text-center ag-muted mt-3 mb-0" style={{ fontSize: '0.84rem' }}>
+            Already have an account? <Link to="/login" className="fw-semibold text-decoration-none">Log in</Link>
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+function Field({ id, label, error, invalid, hint, ...props }) {
+  return (
+    <>
+      <label htmlFor={id} className="form-label small fw-semibold mb-1">{label}</label>
+      <input id={id} className={`ag-input ${invalid}`} required {...props} />
+      {error
+        ? <div className="text-danger mb-3 mt-1" style={{ fontSize: '0.78rem' }}>{error}</div>
+        : hint
+          ? <div className="ag-muted mb-3 mt-1" style={{ fontSize: '0.76rem' }}>{hint}</div>
+          : <div className="mb-3" />}
+    </>
   );
 }

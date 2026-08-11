@@ -87,7 +87,10 @@ export default function ProductDetails() {
         <div className="d-flex align-items-start justify-content-between gap-3">
           <h1 className="fw-bold mb-1" style={{ fontSize: '1.5rem' }}>{product.name}</h1>
           <div className="text-end">
-            <div className="ag-price" style={{ fontSize: '1.2rem' }}>{formatPrice(product.price)}</div>
+            <div className="ag-price-board lg">
+              {formatPrice(product.price)}
+              <span className="unit">{product.unit}</span>
+            </div>
             {product.rating > 0 && (
               <div className="ag-muted d-flex align-items-center gap-1 justify-content-end" style={{ fontSize: '0.8rem' }}>
                 <StarIcon size={13} /> {product.rating.toFixed(1)}

@@ -60,13 +60,15 @@ export default function Home() {
 
       <div className="ag-hero mb-3">
         <ProduceScatter />
-        <span className="ag-eyebrow mb-2" style={{ color: 'rgba(255,255,255,0.75)' }}>Farm Fresh</span>
-        <h2 className="mb-1">Seasonal Picks</h2>
-        <p className="mb-3" style={{ color: 'rgba(255,255,255,0.82)', fontSize: '0.9rem', maxWidth: '34ch' }}>
-          Harvested this week by growers near you.
+        <span className="ag-eyebrow mb-2" style={{ color: 'var(--ag-turmeric)' }}>
+          Today's board
+        </span>
+        <h2 className="mb-2">Straight from the farm gate</h2>
+        <p className="mb-3" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.92rem', maxWidth: '32ch' }}>
+          Growers set their own prices and update them as they pick.
         </p>
         <Link to="/shop" className="btn btn-light btn-sm rounded-pill fw-semibold align-self-start px-3">
-          Shop Now
+          See today's produce
         </Link>
       </div>
 

@@ -44,7 +44,9 @@ export default function ProductCard({ product }) {
         <div className="ag-muted" style={{ fontSize: '0.72rem' }}>{product.unit}</div>
 
         <div className="d-flex align-items-center justify-content-between mt-auto pt-2">
-          <span className="ag-price" style={{ fontSize: '0.9rem' }}>{formatPrice(product.price)}</span>
+          <span className="ag-price-board" style={{ fontSize: '0.88rem' }}>
+            {formatPrice(product.price)}
+          </span>
           <button
             className="ag-add-btn"
             onClick={handleAdd}

@@ -40,6 +40,13 @@
   --ag-amber-soft: #fdf1dc;
   --ag-terracotta: #c75c33;
 
+  /* Deep cool ink, the colour of a painted mandi board. This is the structural
+     counterweight that pulls the page away from the cream-and-terracotta look
+     every warm marketplace lands on. Turmeric is what gets painted onto it. */
+  --ag-ink: #1b2a4a;
+  --ag-ink-deep: #121d34;
+  --ag-turmeric: #f5b323;
+
   --ag-danger: #c0362c;
   --ag-danger-soft: #fdeceb;
 
@@ -48,8 +55,9 @@
   --ag-green-dark: var(--ag-green-700);
   --ag-green-soft: #e6f4ec;
 
-  --ag-bg: #f7f6f1;          /* warm paper, not clinical grey */
-  --ag-bg-alt: #efeee8;
+  /* Cool paper with a green cast — jute and crate wood, not stationery cream. */
+  --ag-bg: #eff3ec;
+  --ag-bg-alt: #e4eae1;
   --ag-card: #ffffff;
   --ag-text: #10221a;
   --ag-muted: #5f6b64;
@@ -68,8 +76,10 @@
 
   --ag-tabbar: 72px;
 
-  --ag-font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --ag-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ag-font-display: 'Bricolage Grotesque', 'Public Sans', system-ui, sans-serif;
+  --ag-font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Numerals only — prices, counts, quantities. */
+  --ag-font-num: 'Space Grotesk', ui-monospace, monospace;
 
   /* Type scale — 12 / 14 / 16 / 18 / 22 / 28 / 36 */
   --ag-text-xs: 0.75rem;
@@ -142,13 +152,47 @@ h1, h2, h3, .ag-display {
 
 .ag-muted { color: var(--ag-muted); }
 
-/* Tabular figures stop prices jittering as digits change. */
+/* --- The price board (signature) -----------------------------------------
+   In a mandi the price board is the artifact everyone actually reads: painted
+   ink, chalked numerals, rubbed out and rewritten through the day. So price is
+   the one loud element in this interface, and it is set as equipment —
+   mechanical digits on painted ink — rather than as body text.
+   Everything else is kept quiet so this can carry the identity alone. */
+
 .ag-price {
+  font-family: var(--ag-font-num);
   font-weight: 700;
   color: var(--ag-text);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
+
+/* Painted-board treatment, used where the price is the point. */
+.ag-price-board {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  background: var(--ag-ink);
+  color: var(--ag-turmeric);
+  font-family: var(--ag-font-num);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  padding: 0.22rem 0.5rem;
+  border-radius: 6px;
+  /* A hairline highlight along the top, like paint catching the light. */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.ag-price-board .unit {
+  font-family: var(--ag-font-body);
+  font-size: 0.62em;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0;
+}
+
+.ag-price-board.lg { font-size: 1.6rem; padding: 0.35rem 0.7rem; border-radius: 8px; }
 
 .text-agrilink { color: var(--ag-green); }
 
@@ -464,38 +508,28 @@ h1, h2, h3, .ag-display {
   --angle: calc(var(--i) * 45deg);
 }
 
+/* A painted board: flat ink, a turmeric rule across the top like the stripe
+   on a market signboard, and no gradient. The flatness is the point — a soft
+   gradient would make it scenery instead of an object. */
 .ag-hero {
   position: relative;
   border-radius: var(--ag-radius);
-  background-color: var(--ag-green-800);
-  background-image:
-    radial-gradient(24rem 16rem at 88% 8%, rgba(232, 145, 42, 0.42), transparent 62%),
-    radial-gradient(22rem 18rem at 8% 108%, rgba(52, 184, 114, 0.55), transparent 60%),
-    linear-gradient(140deg, var(--ag-green-900), var(--ag-green-700));
+  background-color: var(--ag-ink);
   color: #fff;
-  padding: 1.6rem 1.4rem;
-  min-height: 176px;
+  padding: 1.7rem 1.4rem 1.5rem;
+  min-height: 178px;
   display: flex; flex-direction: column; justify-content: center;
   box-shadow: var(--ag-shadow-lg);
   overflow: hidden;
   isolation: isolate;
-}
-
-/* Soft light bloom, purely atmospheric. */
-.ag-hero::after {
-  content: '';
-  position: absolute;
-  width: 16rem; height: 16rem;
-  right: -4rem; bottom: -7rem;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 68%);
-  border-radius: 50%;
-  z-index: -1;
+  border-top: 5px solid var(--ag-turmeric);
 }
 
 .ag-hero h2 {
   font-family: var(--ag-font-display);
-  font-size: var(--ag-text-2xl);
-  font-weight: 600;
+  font-size: var(--ag-text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 /* --- 9. Stepper ----------------------------------------------------------- */
@@ -517,6 +551,7 @@ h1, h2, h3, .ag-display {
 .ag-stepper button:disabled { opacity: 0.3; }
 .ag-stepper span {
   min-width: 30px; text-align: center; font-weight: 700;
+  font-family: var(--ag-font-num);
   font-variant-numeric: tabular-nums;
 }
 
@@ -726,15 +761,10 @@ a { color: var(--ag-green); text-underline-offset: 2px; }
   100% { opacity: 0; transform: rotate(var(--angle)) translateY(-92px) rotate(calc(-1 * var(--angle))) scale(1); }
 }
 
-/* Gentle wobble for the category tiles. */
-@keyframes ag-wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25%      { transform: rotate(-7deg); }
-  75%      { transform: rotate(7deg); }
-}
-@media (hover: hover) {
-  .ag-cat:hover .ag-cat-icon svg { animation: ag-wiggle 0.5s ease; }
-}
+/* The category wiggle lived here. Removed deliberately: with the hero drift,
+   the marquee, card lift and the badge pop already running, it was the fourth
+   competing motion and made the page feel restless. One memorable moment beats
+   four small ones. */
 
 .ag-shell > * { animation: ag-rise 0.34s ease both; }
 

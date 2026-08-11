@@ -1,5 +1,17 @@
 import 'dotenv/config';
+import dns from 'node:dns';
 import connectDB from './config/db.js';
+
+// Atlas `mongodb+srv://` URIs need an SRV lookup, which Node performs with its
+// own resolver rather than the OS one. If that resolver points at a local DNS
+// proxy that isn't running, every connection fails with querySrv ECONNREFUSED
+// even though nslookup and Compass resolve fine. Setting DNS_SERVERS routes
+// lookups around it.
+if (process.env.DNS_SERVERS) {
+  const servers = process.env.DNS_SERVERS.split(',').map((s) => s.trim()).filter(Boolean);
+  dns.setServers(servers);
+  console.log(`DNS resolver overridden: ${servers.join(', ')}`);
+}
 
 // Fail loudly at startup rather than per-request. A missing JWT_SECRET would
 // otherwise let the server boot and then reject every login with a 500.

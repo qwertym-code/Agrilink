@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import TopBar from '../components/TopBar';
 import { UserIcon, CartIcon, ShopIcon } from '../components/Icons';
+import { ThemeChoice } from '../components/ThemeToggle';
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -26,6 +27,12 @@ export default function Profile() {
               <Link to="/login" className="btn btn-agrilink btn-sm">Log in</Link>
               <Link to="/register" className="btn btn-agrilink-outline btn-sm">Sign up</Link>
             </div>
+          </div>
+
+          {/* Available signed out too — appearance isn't account data. */}
+          <div className="ag-panel mt-3">
+            <h3 className="ag-section-title">Appearance</h3>
+            <ThemeChoice />
           </div>
         </div>
       </>
@@ -56,6 +63,11 @@ export default function Profile() {
           <Row label="Email" value={user.email} />
           <Row label="Phone" value={`+91 ${user.phone}`} />
           <Row label="Account type" value={user.role === 'retailer' ? 'Retailer / Farmer' : 'Consumer'} />
+        </div>
+
+        <div className="ag-panel mb-3">
+          <h3 className="ag-section-title">Appearance</h3>
+          <ThemeChoice />
         </div>
 
         <div className="ag-panel mb-3 p-0 overflow-hidden">

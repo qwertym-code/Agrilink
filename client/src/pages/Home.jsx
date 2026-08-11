@@ -4,6 +4,7 @@ import api, { getErrorMessage } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useShopConfig } from '../context/ShopConfigContext';
 import ProductCard from '../components/ProductCard';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { SearchIcon, PinIcon, LeafIcon, categoryIcon } from '../components/Icons';
 import { titleCase, formatPrice } from '../utils/format';
 
@@ -33,7 +34,11 @@ export default function Home() {
 
   return (
     <div className="ag-shell px-3 pt-3">
-      <h1 className="fw-bold text-agrilink mb-3" style={{ fontSize: '1.4rem' }}>Agrilink</h1>
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <h1 className="text-agrilink mb-0" style={{ fontSize: 'var(--ag-text-2xl)' }}>Agrilink</h1>
+        {/* Mobile only — the desktop navbar carries its own toggle. */}
+        <ThemeToggle className="d-md-none" />
+      </div>
 
       <form onSubmit={search} className="ag-search mb-2">
         <SearchIcon size={18} className="ag-muted" />

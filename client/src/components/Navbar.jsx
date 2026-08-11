@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { CartIcon } from './Icons';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * Desktop header. Hidden below 768px, where BottomNav takes over — the mockups
@@ -43,6 +44,8 @@ export default function Navbar() {
               </NavLink>
             </>
           )}
+
+          <ThemeToggle className="ms-1 me-1" />
 
           {user ? (
             <>

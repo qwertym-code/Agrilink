@@ -21,15 +21,26 @@
 
     <script>
       // Bootstrap only themes its own components when this attribute is set,
-      // and CSS media queries can't set attributes. Runs before paint so there
-      // is no light flash on a dark device.
+      // and CSS media queries can't set attributes. This runs before paint so
+      // a saved preference never flashes the wrong theme first — React mounts
+      // too late to prevent that, which is why it isn't done there.
       (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('agrilink_theme'); } catch (e) {}
+
+        var explicit = saved === 'light' || saved === 'dark';
         var dark = window.matchMedia('(prefers-color-scheme: dark)');
-        var apply = function (isDark) {
-          document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-        };
-        apply(dark.matches);
-        dark.addEventListener('change', function (e) { apply(e.matches); });
+        var theme = explicit ? saved : (dark.matches ? 'dark' : 'light');
+
+        document.documentElement.setAttribute('data-bs-theme', theme);
+
+        // Only follow the OS while no explicit choice is stored. Once the app
+        // mounts, ThemeContext takes over.
+        if (!explicit) {
+          dark.addEventListener('change', function (e) {
+            document.documentElement.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
+          });
+        }
       })();
     </script>
   </head>

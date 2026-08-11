@@ -26,6 +26,9 @@ export const BreadIcon = (p) => <Svg {...p}><path d="M4 12a4 4 0 0 1 4-4h8a4 4 0
 export const BasketIcon = (p) => <Svg {...p}><path d="M3 9h18l-2 11H5L3 9Z" /><path d="m8 9 3-5m5 5-3-5" /></Svg>;
 export const CheckIcon = (p) => <Svg {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></Svg>;
 export const EditIcon = (p) => <Svg {...p}><path d="M4 20h4L20 8l-4-4L4 16v4Z" /></Svg>;
+export const SunIcon = (p) => <Svg {...p}><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" /></Svg>;
+export const MoonIcon = (p) => <Svg {...p}><path d="M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5Z" /></Svg>;
+export const MonitorIcon = (p) => <Svg {...p}><rect x="3" y="4.5" width="18" height="12" rx="2" /><path d="M9 20h6M12 16.5V20" /></Svg>;
 
 /** Category id → icon, used by the home screen circles. */
 export const categoryIcon = {

@@ -244,9 +244,31 @@ h1, h2, h3, .ag-display {
 }
 .ag-add-btn:disabled { opacity: 0.4; box-shadow: none; }
 
+/* Circular icon button — theme toggle and similar. 44px to meet the touch
+   target floor even though the glyph inside is 18px. */
+.ag-icon-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--ag-border);
+  background: var(--ag-card);
+  color: var(--ag-text);
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: var(--ag-shadow-xs);
+  flex: 0 0 auto;
+}
+.ag-icon-btn:hover { border-color: var(--ag-green); color: var(--ag-green); }
+.ag-icon-btn:active { transform: scale(0.92); }
+.ag-icon-btn { transition: border-color 0.2s ease, color 0.2s ease, transform 0.13s ease; }
+
+.ag-icon-btn-swap {
+  display: inline-flex;
+  animation: ag-swap 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
 /* Focus must stay visible for keyboard users — never remove it. */
 .btn-agrilink:focus-visible,
 .btn-agrilink-outline:focus-visible,
+.ag-icon-btn:focus-visible,
 .ag-add-btn:focus-visible,
 .ag-chip:focus-visible,
 .ag-tab:focus-visible,
@@ -613,6 +635,10 @@ a { color: var(--ag-green); text-underline-offset: 2px; }
 @keyframes ag-shimmer {
   0%   { background-position: 100% 50%; }
   100% { background-position: 0 50%; }
+}
+@keyframes ag-swap {
+  from { opacity: 0; transform: rotate(-50deg) scale(0.6); }
+  to   { opacity: 1; transform: none; }
 }
 
 .ag-shell > * { animation: ag-rise 0.34s ease both; }

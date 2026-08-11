@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { formatPrice, titleCase } from '../utils/format';
-import { PlusIcon, CheckIcon } from './Icons';
+import { PlusIcon } from './Icons';
 import ProductImage from './ProductImage';
 
 /**
@@ -44,7 +44,13 @@ export default function ProductCard({ product }) {
             disabled={soldOut}
             aria-label={`Add ${product.name} to cart`}
           >
-            {inCart ? <CheckIcon size={16} /> : <PlusIcon size={16} />}
+            {/* Show the quantity rather than a tick: a tick says "added" but
+                not how many, and tapping again adds another. */}
+            {inCart ? (
+              <span style={{ fontSize: '0.78rem', fontWeight: 700 }}>{inCart}</span>
+            ) : (
+              <PlusIcon size={16} />
+            )}
           </button>
         </div>
       </div>

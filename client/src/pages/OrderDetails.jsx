@@ -51,7 +51,7 @@ export default function OrderDetails() {
       <div className="ag-shell px-3 pt-3">
         <div className="ag-panel text-center mb-3">
           <div
-            className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+            className="ag-success-tick rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
             style={{ width: 52, height: 52, background: 'var(--ag-green)', color: '#fff' }}
           >
             <CheckIcon size={28} />

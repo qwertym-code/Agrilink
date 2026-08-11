@@ -24,7 +24,11 @@ export default function BottomNav() {
         <NavLink key={to} to={to} end={end} className={({ isActive }) => `ag-tab ${isActive ? 'active' : ''}`}>
           <span className="ag-tab-icon">
             <Icon />
-            {to === '/cart' && count > 0 && <span className="ag-tab-count">{count}</span>}
+            {/* key={count} remounts the bubble so the pop animation replays
+                on every change — CSS animations don't restart on their own. */}
+            {to === '/cart' && count > 0 && (
+              <span className="ag-tab-count" key={count}>{count}</span>
+            )}
           </span>
           {label}
         </NavLink>

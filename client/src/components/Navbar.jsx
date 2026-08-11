@@ -38,7 +38,7 @@ export default function Navbar() {
               <NavLink to="/cart" className={link}>
                 <span className="position-relative">
                   <CartIcon size={18} />
-                  {count > 0 && <span className="ag-tab-count">{count}</span>}
+                  {count > 0 && <span className="ag-tab-count" key={count}>{count}</span>}
                 </span>
               </NavLink>
             </>

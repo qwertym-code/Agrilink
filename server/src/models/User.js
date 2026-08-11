@@ -47,8 +47,11 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: [true, 'Please choose whether you are a consumer or a retailer'],
+      // 'admin' is deliberately not obtainable through signup — the register
+      // controller whitelists consumer/retailer. Admins are promoted only by
+      // the make-admin script, which needs database credentials to run.
       enum: {
-        values: ['consumer', 'retailer'],
+        values: ['consumer', 'retailer', 'admin'],
         message: 'Role must be either consumer or retailer',
       },
     },

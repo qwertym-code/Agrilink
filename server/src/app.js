@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 import ApiError from './utils/ApiError.js';
 import { CATEGORIES, TAGS } from './models/Product.js';
@@ -63,6 +64,7 @@ app.get('/api/config', (req, res) =>
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Order matters: unmatched routes first, then the error formatter last.
 app.use(notFound);

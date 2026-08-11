@@ -9,7 +9,11 @@ export const useAuth = () => useContext(AuthContext);
  * Where a user belongs once signed in. Consumers land on the storefront rather
  * than a dashboard — browsing produce is the whole point for them.
  */
-export const dashboardPath = (role) => (role === 'retailer' ? '/retailer' : '/');
+export const dashboardPath = (role) => {
+  if (role === 'admin') return '/admin';
+  if (role === 'retailer') return '/retailer';
+  return '/';
+};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

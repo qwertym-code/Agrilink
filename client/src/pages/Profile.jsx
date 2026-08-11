@@ -71,7 +71,9 @@ export default function Profile() {
         </div>
 
         <div className="ag-panel mb-3 p-0 overflow-hidden">
-          {user.role === 'retailer' ? (
+          {user.role === 'admin' ? (
+            <MenuLink to="/admin" icon={<ShopIcon size={18} />} label="Platform dashboard" />
+          ) : user.role === 'retailer' ? (
             <>
               <MenuLink to="/retailer" icon={<ShopIcon size={18} />} label="My listings" />
               <MenuLink to="/retailer/orders" icon={<CartIcon size={18} />} label="Incoming orders" />

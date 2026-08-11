@@ -16,6 +16,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import RetailerDashboard from './pages/RetailerDashboard';
 import RetailerOrders from './pages/RetailerOrders';
+import AdminDashboard from './pages/AdminDashboard';
 
 /** Keeps a signed-in user off the login and register pages. */
 function PublicOnly({ children }) {
@@ -64,6 +65,11 @@ export default function App() {
           <Route
             path="/retailer/orders"
             element={<ProtectedRoute role="retailer"><RetailerOrders /></ProtectedRoute>}
+          />
+
+          <Route
+            path="/admin"
+            element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>}
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />

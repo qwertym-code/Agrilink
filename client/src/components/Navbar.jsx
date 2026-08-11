@@ -27,7 +27,9 @@ export default function Navbar() {
         <Link to="/" className="fw-bold text-agrilink text-decoration-none fs-5">Agrilink</Link>
 
         <div className="d-flex align-items-center ms-auto gap-1">
-          {user?.role === 'retailer' ? (
+          {user?.role === 'admin' ? (
+            <NavLink to="/admin" className={link}>Dashboard</NavLink>
+          ) : user?.role === 'retailer' ? (
             <>
               <NavLink to="/retailer" className={link}>My listings</NavLink>
               <NavLink to="/retailer/orders" className={link}>Orders</NavLink>

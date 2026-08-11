@@ -9,9 +9,20 @@ import normalizePhone from '../utils/normalizePhone.js';
 // and phone numbers hold accounts.
 const INVALID_CREDENTIALS = 'Invalid email/phone or password';
 
+// The only roles obtainable through public signup.
+const SIGNUP_ROLES = ['consumer', 'retailer'];
+
 /** POST /api/auth/register */
 export const register = asyncHandler(async (req, res) => {
   const { name, email, phone, password, role, farmName, location } = req.body;
+
+  // Whitelist, not blacklist. The schema enum also permits 'admin', so without
+  // this check anyone could grant themselves platform access simply by posting
+  // role: "admin". Admins are only ever created by the make-admin script,
+  // which requires database credentials.
+  if (!SIGNUP_ROLES.includes(role)) {
+    throw new ApiError(400, 'Please choose whether you are a consumer or a retailer');
+  }
 
   const doc = { name, email, phone, password, role };
 

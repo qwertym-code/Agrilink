@@ -15,8 +15,9 @@ export default function BottomNav() {
   const { count } = useCart();
   const { user } = useAuth();
 
-  // Retailers manage stock rather than shop, so they get a different bar.
-  if (user?.role === 'retailer') return null;
+  // Retailers manage stock and admins watch the platform — neither shops, so
+  // the storefront tabs would just be noise for them.
+  if (user?.role === 'retailer' || user?.role === 'admin') return null;
 
   return (
     <nav className="ag-tabbar">

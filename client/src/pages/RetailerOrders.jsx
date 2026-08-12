@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import api, { getErrorMessage } from '../api/axios';
 import TopBar from '../components/TopBar';
 import { formatPrice, titleCase } from '../utils/format';
-import { PinIcon } from '../components/Icons';
+import { PinIcon, CheckIcon } from '../components/Icons';
 import ProductImage from '../components/ProductImage';
 
 /** Incoming orders. The API strips other retailers' lines before sending. */
@@ -10,6 +10,7 @@ export default function RetailerOrders() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -19,6 +20,27 @@ export default function RetailerOrders() {
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);
+
+  const setFulfilled = async (orderId, fulfilled) => {
+    setSaving(orderId);
+    setError('');
+    try {
+      const { data } = await api.patch(`/orders/${orderId}/fulfil`, { fulfilled });
+      // Patch just this row rather than refetching the list — the rest of the
+      // page hasn't changed and a full reload would lose the scroll position.
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId
+            ? { ...o, mineFulfilled: fulfilled, status: data.status }
+            : o
+        )
+      );
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setSaving(null);
+    }
+  };
 
   return (
     <>
@@ -88,6 +110,45 @@ export default function RetailerOrders() {
                   {order.paymentMethod === 'cod' ? 'Cash on delivery' : 'Card (demo)'}
                 </span>
               </div>
+
+              <div className="d-flex align-items-center gap-2 mt-3">
+                {order.mineFulfilled ? (
+                  <>
+                    <span
+                      className="d-inline-flex align-items-center gap-1 fw-semibold"
+                      style={{ color: 'var(--ag-green)', fontSize: '0.85rem' }}
+                    >
+                      <CheckIcon size={16} /> Handed over
+                    </span>
+                    {/* Undo stays available: marking the wrong order is easy on
+                        a phone, and the fix shouldn't need a support request. */}
+                    <button
+                      className="btn btn-sm border-0 ag-muted ms-auto p-1"
+                      style={{ fontSize: '0.78rem', textDecoration: 'underline' }}
+                      onClick={() => setFulfilled(order._id, false)}
+                      disabled={saving === order._id}
+                    >
+                      Undo
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="btn btn-agrilink btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
+                    onClick={() => setFulfilled(order._id, true)}
+                    disabled={saving === order._id}
+                  >
+                    <CheckIcon size={16} />
+                    {saving === order._id ? 'Saving…' : 'Mark as handed over'}
+                  </button>
+                )}
+              </div>
+
+              {order.sharedWithOtherFarms && (
+                <p className="ag-muted mt-2 mb-0" style={{ fontSize: '0.72rem' }}>
+                  This basket also has produce from another farm. Marking yours
+                  handed over won't complete the whole order.
+                </p>
+              )}
             </div>
           ))
         )}

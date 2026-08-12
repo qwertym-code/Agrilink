@@ -17,6 +17,12 @@ const orderItemSchema = new mongoose.Schema(
     unit: { type: String, default: '' },
     imageUrl: { type: String, default: '' },
     quantity: { type: Number, required: true, min: [1, 'Quantity must be at least 1'] },
+
+    // Fulfilment is tracked per line, not per order, because one basket can
+    // hold produce from several farms. A single order-level flag would let one
+    // retailer mark another farm's items delivered.
+    fulfilled: { type: Boolean, default: false },
+    fulfilledAt: { type: Date },
   },
   { _id: false }
 );

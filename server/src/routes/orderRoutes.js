@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { createOrder, myOrders, getOrder, incomingOrders } from '../controllers/orderController.js';
+import {
+  createOrder, myOrders, getOrder, incomingOrders, fulfilOrderItems,
+} from '../controllers/orderController.js';
 import { protect, requireRole } from '../middleware/auth.js';
 
 const router = Router();
@@ -9,6 +11,8 @@ router.get('/', protect, requireRole('consumer'), myOrders);
 
 // Before '/:id' so "incoming" is not read as an order id.
 router.get('/incoming', protect, requireRole('retailer'), incomingOrders);
+
+router.patch('/:id/fulfil', protect, requireRole('retailer'), fulfilOrderItems);
 
 router.get('/:id', protect, getOrder);
 

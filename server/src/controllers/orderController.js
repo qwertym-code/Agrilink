@@ -101,6 +101,58 @@ export const getOrder = asyncHandler(async (req, res) => {
   res.json({ order });
 });
 
+/**
+ * The order's overall status is derived from its lines rather than set by
+ * hand, so it can never disagree with them.
+ */
+function deriveStatus(order) {
+  const fulfilled = order.items.filter((item) => item.fulfilled).length;
+  if (fulfilled === 0) return 'placed';
+  if (fulfilled === order.items.length) return 'delivered';
+  return 'out-for-delivery'; // some farms have handed over, others haven't
+}
+
+/**
+ * PATCH /api/orders/:id/fulfil — retailers only.
+ * Body: { fulfilled?: boolean }  (defaults to true; false undoes a mistake)
+ *
+ * Marks only the caller's own lines. Other farms' items in the same basket are
+ * untouched.
+ */
+export const fulfilOrderItems = asyncHandler(async (req, res) => {
+  const fulfilled = req.body.fulfilled !== false;
+
+  const order = await Order.findById(req.params.id);
+  if (!order) throw new ApiError(404, 'Order not found');
+
+  const mine = order.items.filter((item) => item.retailer.equals(req.user._id));
+  if (mine.length === 0) {
+    throw new ApiError(403, 'This order contains none of your produce');
+  }
+
+  if (order.status === 'cancelled') {
+    throw new ApiError(400, 'This order was cancelled and cannot be updated');
+  }
+
+  for (const item of mine) {
+    item.fulfilled = fulfilled;
+    item.fulfilledAt = fulfilled ? new Date() : undefined;
+  }
+
+  order.status = deriveStatus(order);
+  await order.save();
+
+  res.json({
+    status: order.status,
+    fulfilled,
+    // How much of the whole basket is done — useful when other farms share it.
+    progress: {
+      done: order.items.filter((i) => i.fulfilled).length,
+      total: order.items.length,
+    },
+  });
+});
+
 /** GET /api/orders/incoming — orders containing the retailer's produce. */
 export const incomingOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({ 'items.retailer': req.user._id })
@@ -120,6 +172,10 @@ export const incomingOrders = asyncHandler(async (req, res) => {
       deliveryAddress: order.deliveryAddress,
       items: mine,
       itemsTotal: money(mine.reduce((sum, item) => sum + item.price * item.quantity, 0)),
+      // Whether THIS retailer's part is done — the order's own status may
+      // still say in-progress while another farm finishes its lines.
+      mineFulfilled: mine.every((item) => item.fulfilled),
+      sharedWithOtherFarms: mine.length !== order.items.length,
     };
   });
 

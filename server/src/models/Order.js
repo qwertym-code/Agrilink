@@ -76,6 +76,18 @@ const orderSchema = new mongoose.Schema(
       default: 'placed',
       index: true,
     },
+
+    /**
+     * Recorded, not just flagged. "Cancelled" without a reason leaves both
+     * sides guessing — the buyer doesn't know whether to reorder, and the
+     * farmer can't tell a stock problem from a change of mind.
+     */
+    cancellation: {
+      reason: { type: String, trim: true, maxlength: [300, 'Keep the reason under 300 characters'] },
+      at: { type: Date },
+      by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      byRole: { type: String, enum: ['consumer', 'retailer', 'admin'] },
+    },
   },
   { timestamps: true }
 );

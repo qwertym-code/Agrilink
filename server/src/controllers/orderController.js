@@ -153,6 +153,64 @@ export const fulfilOrderItems = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * PATCH /api/orders/:id/cancel
+ * Body: { reason }
+ *
+ * Either side may cancel: a buyer changes their mind, or a farmer cannot
+ * supply. Both must say why.
+ */
+export const cancelOrder = asyncHandler(async (req, res) => {
+  const reason = String(req.body.reason || '').trim();
+
+  if (reason.length < 3) {
+    throw new ApiError(400, 'Please give a short reason for cancelling');
+  }
+  if (reason.length > 300) {
+    throw new ApiError(400, 'Keep the reason under 300 characters');
+  }
+
+  const order = await Order.findById(req.params.id);
+  if (!order) throw new ApiError(404, 'Order not found');
+
+  const isBuyer = order.consumer.equals(req.user._id);
+  const isSeller = order.items.some((item) => item.retailer.equals(req.user._id));
+  const isAdmin = req.user.role === 'admin';
+
+  if (!isBuyer && !isSeller && !isAdmin) {
+    throw new ApiError(403, 'You cannot cancel this order');
+  }
+
+  if (order.status === 'cancelled') {
+    throw new ApiError(400, 'This order is already cancelled');
+  }
+  // Once produce has changed hands, cancelling is a refund conversation, not
+  // a status change — so the system refuses rather than pretending.
+  if (order.status === 'delivered') {
+    throw new ApiError(400, 'This order was already delivered and cannot be cancelled');
+  }
+
+  order.status = 'cancelled';
+  order.cancellation = {
+    reason,
+    at: new Date(),
+    by: req.user._id,
+    byRole: isBuyer ? 'consumer' : isSeller ? 'retailer' : 'admin',
+  };
+
+  await order.save();
+
+  // Stock was decremented when the order was placed, so cancelling has to put
+  // it back — otherwise every cancellation quietly destroys inventory.
+  await Promise.all(
+    order.items.map((item) =>
+      Product.updateOne({ _id: item.product }, { $inc: { stock: item.quantity } })
+    )
+  );
+
+  res.json({ status: order.status, cancellation: order.cancellation });
+});
+
 /** GET /api/orders/incoming — orders containing the retailer's produce. */
 export const incomingOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({ 'items.retailer': req.user._id })
@@ -171,6 +229,7 @@ export const incomingOrders = asyncHandler(async (req, res) => {
       consumer: order.consumer,
       deliveryAddress: order.deliveryAddress,
       items: mine,
+      cancellation: order.cancellation?.reason ? order.cancellation : undefined,
       itemsTotal: money(mine.reduce((sum, item) => sum + item.price * item.quantity, 0)),
       // Whether THIS retailer's part is done — the order's own status may
       // still say in-progress while another farm finishes its lines.

@@ -4,6 +4,7 @@ import TopBar from '../components/TopBar';
 import { formatPrice, titleCase } from '../utils/format';
 import { PinIcon, CheckIcon } from '../components/Icons';
 import ProductImage from '../components/ProductImage';
+import CancelOrder, { CancellationNote } from '../components/CancelOrder';
 
 /** Incoming orders. The API strips other retailers' lines before sending. */
 export default function RetailerOrders() {
@@ -111,6 +112,10 @@ export default function RetailerOrders() {
                 </span>
               </div>
 
+              {order.status === 'cancelled' ? (
+                <CancellationNote cancellation={order.cancellation} />
+              ) : (
+                <>
               <div className="d-flex align-items-center gap-2 mt-3">
                 {order.mineFulfilled ? (
                   <>
@@ -148,6 +153,28 @@ export default function RetailerOrders() {
                   This basket also has produce from another farm. Marking yours
                   handed over won't complete the whole order.
                 </p>
+              )}
+
+              {/* Cancelling sits below the primary action and in a danger
+                  colour, so it is never the button reached for by accident. */}
+              {!order.mineFulfilled && (
+                <div className="mt-2">
+                  <CancelOrder
+                    orderId={order._id}
+                    role="retailer"
+                    onCancelled={(data) =>
+                      setOrders((prev) =>
+                        prev.map((o) =>
+                          o._id === order._id
+                            ? { ...o, status: data.status, cancellation: data.cancellation }
+                            : o
+                        )
+                      )
+                    }
+                  />
+                </div>
+              )}
+                </>
               )}
             </div>
           ))

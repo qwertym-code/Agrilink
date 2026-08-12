@@ -6,6 +6,7 @@ import { formatPrice, titleCase } from '../utils/format';
 import { CheckIcon, PinIcon } from '../components/Icons';
 import ProductImage from '../components/ProductImage';
 import { ProduceBurst } from '../components/Decor';
+import CancelOrder, { CancellationNote } from '../components/CancelOrder';
 
 export default function OrderDetails() {
   const { id } = useParams();
@@ -111,6 +112,23 @@ export default function OrderDetails() {
             </div>
           </div>
         </div>
+
+        {order.status === 'cancelled' ? (
+          <div className="ag-panel mb-3">
+            <h3 className="ag-section-title mb-1">Cancelled</h3>
+            <CancellationNote cancellation={order.cancellation} />
+          </div>
+        ) : order.status !== 'delivered' && (
+          <div className="mb-3">
+            <CancelOrder
+              orderId={order._id}
+              role="consumer"
+              onCancelled={(data) =>
+                setOrder((prev) => ({ ...prev, status: data.status, cancellation: data.cancellation }))
+              }
+            />
+          </div>
+        )}
 
         <Link to="/shop" className="btn btn-agrilink-outline w-100">Continue shopping</Link>
       </div>
